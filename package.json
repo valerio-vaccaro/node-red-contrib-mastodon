@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-mastodon",
+  "version": "0.0.2",
+  "description": "Mastodon node for node-red platform",
+  "author": "Valerio Vaccaro <valerio.vaccaro@gmail.com>",
+  "dependencies": {
+    "mastodon": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valerio-vaccaro/node-red-contrib-mastodon"
+  },
+  "keywords": ["node-red", "mastodon"],
+  "node-red": {
+    "nodes": {
+      "sendMessage": "mastodon/sendMessage.js",
+      "getMessage": "mastodon/getMessage.js"
+    }
+  }
+}
