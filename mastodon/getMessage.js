@@ -37,7 +37,7 @@ module.exports = function(RED) {
       access_token: access_token,
       timeout_ms: timeout_ms, // optional HTTP request timeout to apply to all requests.
       api_url: api_url, // optional, defaults to https://mastodon.social/api/v1/
-    })
+    });
 
     // Status icon
     this.status({

@@ -37,7 +37,7 @@ module.exports = function(RED) {
       access_token: access_token,
       timeout_ms: timeout_ms, // optional HTTP request timeout to apply to all requests.
       api_url: api_url, // optional, defaults to https://mastodon.social/api/v1/
-    })
+    });
 
     // Status icon
     this.status({
@@ -47,22 +47,31 @@ module.exports = function(RED) {
     });
 
     this.on("input", function(msg) {
-      /*var id;
-      M.post('media', { file: fs.createReadStream('path/to/image.png') }).then(resp => {
-        id = resp.data.id;
-        M.post('statuses', { status: '#selfie', media_ids: [id] })
-      })*/
-      try {
+      if (msg.payload.hasOwnProperty('image')) {
+        var id;
+        M.post('media', {
+          file: fs.createReadStream(msg.payload.image)
+        }).then(resp => {
+          id = resp.data.id;
+          M.post('statuses', {
+            status: msg.payload.text,
+            media_ids: [id]
+          });
+          this.status({
+            fill: "green",
+            shape: "dot",
+            text: "sent: " + msg.payload.text
+          });
+        });
+      } else {
         M.post('statuses', {
-          status: msg.payload
+          status: msg.payload.text
         });
         this.status({
           fill: "green",
           shape: "dot",
-          text: "sent: " + msg.payload
+          text: "sent: " + msg.payload.text
         });
-      } catch (err) {
-        console.log(err);
       }
     });
 
