@@ -35,11 +35,6 @@ module.exports = function(RED) {
     this.api_url = n.api_url;
     this.tag = n.tag;
 
-    var M = new Masto({
-      access_token: access_token,
-      timeout_ms: timeout_ms, // optional HTTP request timeout to apply to all requests.
-      api_url: api_url, // optional, defaults to https://mastodon.social/api/v1/
-    });
 
     // Status icon
     this.status({
@@ -49,21 +44,44 @@ module.exports = function(RED) {
     });
 
     this.on("input", function(msg) {
+      var M = new Masto({
+        access_token: this.access_token,
+        timeout_ms: this.timeout_ms, // optional HTTP request timeout to apply to all requests.
+        api_url: this.api_url, // optional, defaults to https://mastodon.social/api/v1/
+      });
+
       try {
-        M.get('timelines/tag/' + msg.payload.tag, {
-            local: false
-          })
-          .then(resp => {
-            console.log(resp.data);
-            msg = {};
-            msg.payload = resp.data;
-            this.status({
-              fill: "green",
-              shape: "dot",
-              text: "received: " + msg.payload
+        if (msg.payload.hasOwnProperty('tag')) {
+          M.get('timelines/tag/' + msg.payload.tag, {
+              local: false
+            })
+            .then(resp => {
+              console.log(resp.data);
+              msg = {};
+              msg.payload = resp.data;
+              this.status({
+                fill: "green",
+                shape: "dot",
+                text: "received: " + msg.payload
+              });
+              node.send(msg);
             });
-            node.send(msg);
-          });
+        } else {
+          M.get('timelines/tag/' + this.tag, {
+              local: false
+            })
+            .then(resp => {
+              console.log(resp.data);
+              msg = {};
+              msg.payload = resp.data;
+              this.status({
+                fill: "green",
+                shape: "dot",
+                text: "received: " + msg.payload
+              });
+              node.send(msg);
+            });
+        };
       } catch (err) {
         console.log(err);
       }
