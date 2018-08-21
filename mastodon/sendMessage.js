@@ -18,6 +18,7 @@
 
 module.exports = function(RED) {
   var Masto = require('mastodon')
+  const fs = require('fs');
 
   function sendMessage(n) {
     RED.nodes.createNode(this, n);
@@ -33,12 +34,6 @@ module.exports = function(RED) {
     this.timeout_ms = n.timeout_ms;
     this.api_url = n.api_url;
 
-    var M = new Masto({
-      access_token: access_token,
-      timeout_ms: timeout_ms, // optional HTTP request timeout to apply to all requests.
-      api_url: api_url, // optional, defaults to https://mastodon.social/api/v1/
-    });
-
     // Status icon
     this.status({
       fill: "grey",
@@ -47,6 +42,11 @@ module.exports = function(RED) {
     });
 
     this.on("input", function(msg) {
+      var M = new Masto({
+        access_token: this.access_token,
+        timeout_ms: this.timeout_ms, // optional HTTP request timeout to apply to all requests.
+        api_url: this.api_url, // optional, defaults to https://mastodon.social/api/v1/
+      });
       if (msg.payload.hasOwnProperty('image')) {
         var id;
         M.post('media', {

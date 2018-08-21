@@ -26,12 +26,14 @@ module.exports = function(RED) {
     var access_token;
     var timeout_ms;
     var api_url;
+    var tag;
     var node = this;
 
     // Get varables from the node
     this.access_token = n.access_token;
     this.timeout_ms = n.timeout_ms;
     this.api_url = n.api_url;
+    this.tag = n.tag;
 
     var M = new Masto({
       access_token: access_token,
@@ -47,20 +49,21 @@ module.exports = function(RED) {
     });
 
     this.on("input", function(msg) {
-      /*var id;
-      M.post('media', { file: fs.createReadStream('path/to/image.png') }).then(resp => {
-        id = resp.data.id;
-        M.post('statuses', { status: '#selfie', media_ids: [id] })
-      })*/
       try {
-        /*M.post('statuses', {
-          status: msg.payload
-        });
-        this.status({
-          fill: "green",
-          shape: "dot",
-          text: "sent: " + msg.payload
-        });*/
+        M.get('timelines/tag/' + msg.payload.tag, {
+            local: false
+          })
+          .then(resp => {
+            console.log(resp.data);
+            msg = {};
+            msg.payload = resp.data;
+            this.status({
+              fill: "green",
+              shape: "dot",
+              text: "received: " + msg.payload
+            });
+            node.send(msg);
+          });
       } catch (err) {
         console.log(err);
       }
