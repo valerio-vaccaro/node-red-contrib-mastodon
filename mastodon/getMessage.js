@@ -50,38 +50,32 @@ module.exports = function(RED) {
         api_url: this.api_url, // optional, defaults to https://mastodon.social/api/v1/
       });
 
+      if (msg.payload.hasOwnProperty('tag'))
+        tag = msg.payload.tag;
+      else
+        tag = this.tag;
+
+      if (msg.payload.hasOwnProperty('since_id'))
+        since_id = msg.payload.since_id;
+      else
+        since_id = 0;
+
       try {
-        if (msg.payload.hasOwnProperty('tag')) {
-          M.get('timelines/tag/' + msg.payload.tag, {
-              local: false
-            })
-            .then(resp => {
-              console.log(resp.data);
-              msg = {};
-              msg.payload = resp.data;
-              this.status({
-                fill: "green",
-                shape: "dot",
-                text: "received: " + msg.payload
-              });
-              node.send(msg);
+        M.get('timelines/tag/' + tag, {
+            local: false,
+            since_id: since_id
+          })
+          .then(resp => {
+            console.log(resp.data);
+            msg = {};
+            msg.payload = resp.data;
+            this.status({
+              fill: "green",
+              shape: "dot",
+              text: "received: " + msg.payload
             });
-        } else {
-          M.get('timelines/tag/' + this.tag, {
-              local: false
-            })
-            .then(resp => {
-              console.log(resp.data);
-              msg = {};
-              msg.payload = resp.data;
-              this.status({
-                fill: "green",
-                shape: "dot",
-                text: "received: " + msg.payload
-              });
-              node.send(msg);
-            });
-        };
+            node.send(msg);
+          });
       } catch (err) {
         console.log(err);
       }
