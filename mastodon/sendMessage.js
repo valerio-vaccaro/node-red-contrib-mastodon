@@ -25,12 +25,14 @@ module.exports = function(RED) {
 
     var msg = {};
     var access_token;
+    var visbility;
     var timeout_ms;
     var api_url;
     var node = this;
 
     // Get varables from the node
     this.access_token = n.access_token;
+    this.visbility = n.visbility;
     this.timeout_ms = n.timeout_ms;
     this.api_url = n.api_url;
 
@@ -55,6 +57,7 @@ module.exports = function(RED) {
           id = resp.data.id;
           M.post('statuses', {
             status: msg.payload.text,
+            visibility: this.visibility,
             media_ids: [id]
           });
           this.status({
@@ -65,7 +68,8 @@ module.exports = function(RED) {
         });
       } else {
         M.post('statuses', {
-          status: msg.payload.text
+          status: msg.payload.text,
+          visibility: this.visibility
         });
         this.status({
           fill: "green",
