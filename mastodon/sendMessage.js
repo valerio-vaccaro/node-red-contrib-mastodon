@@ -25,14 +25,14 @@ module.exports = function(RED) {
 
     var msg = {};
     var access_token;
-    var visbility;
+    var visibility;
     var timeout_ms;
     var api_url;
     var node = this;
 
     // Get varables from the node
     this.access_token = n.access_token;
-    this.visbility = n.visbility;
+    this.visibility = n.visibility;
     this.timeout_ms = n.timeout_ms;
     this.api_url = n.api_url;
 
