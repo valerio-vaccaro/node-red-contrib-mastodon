@@ -70,11 +70,18 @@ module.exports = function(RED) {
         }
         M.post('media', body).then(resp => {
           id = resp.data.id;
-          M.post('statuses', {
+          const body = {
             status: msg.payload.text,
-            visibility: this.visibility,
+            visibility: msg.payload.visibility || this.visibility,
             media_ids: [id]
-          });
+          }
+          if (msg.payload.contentWarning) {
+            body.spoiler_text = msg.payload.contentWarning
+          }
+          if (msg.payload.sensitive) {
+            body.sensitive = true
+          }
+          M.post('statuses', body);
           this.status({
             fill: "green",
             shape: "dot",
@@ -82,10 +89,17 @@ module.exports = function(RED) {
           });
         });
       } else {
-        M.post('statuses', {
+        const body = {
           status: msg.payload.text,
-          visibility: this.visibility
-        });
+          visibility: msg.payload.visibility || this.visibility
+        }
+        if (msg.payload.contentWarning) {
+          body.spoiler_text = msg.payload.contentWarning
+        }
+        if (msg.payload.sensitive) {
+          body.sensitive = true
+        }
+        M.post('statuses', body);
         this.status({
           fill: "green",
           shape: "dot",
