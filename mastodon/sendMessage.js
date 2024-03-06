@@ -63,7 +63,8 @@ module.exports = function(RED) {
           file.push(null)
         }
         M.post('media', {
-          file: file
+          file: file,
+          description: msg.payload.description
         }).then(resp => {
           id = resp.data.id;
           M.post('statuses', {
