@@ -62,10 +62,13 @@ module.exports = function(RED) {
           file.push(msg.payload.image)
           file.push(null)
         }
-        M.post('media', {
-          file: file,
-          description: msg.payload.description
-        }).then(resp => {
+        const body = {
+          file
+        }
+        if (msg.payload.description) {
+          body.description = msg.payload.description
+        }
+        M.post('media', body).then(resp => {
           id = resp.data.id;
           M.post('statuses', {
             status: msg.payload.text,
