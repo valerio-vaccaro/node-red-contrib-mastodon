@@ -19,6 +19,7 @@
 module.exports = function(RED) {
   var Masto = require('mastodon')
   const fs = require('fs');
+  const {Duplex} = require('stream')
 
   function sendMessage(n) {
     RED.nodes.createNode(this, n);
@@ -51,8 +52,16 @@ module.exports = function(RED) {
       });
       if (msg.payload.hasOwnProperty('image')) {
         var id;
+        var file
+        if (typeof msg.payload.image === 'string') {
+          file = fs.createReadStream(msg.payload.image)
+        } else if (typeof msg.payload.image === 'object' && Buffer.isBuffer(msg.payload.image)) {
+          file = new Duplex()
+          file.push(msg.payload.image)
+          file.push(null)
+        }
         M.post('media', {
-          file: fs.createReadStream(msg.payload.image)
+          file: file
         }).then(resp => {
           id = resp.data.id;
           M.post('statuses', {
