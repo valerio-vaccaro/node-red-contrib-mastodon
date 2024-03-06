@@ -41,6 +41,8 @@
 <script type="text/x-red" data-help-name="sendMessage">
     <h1>Posts to Mastodon</h2>
     <p>put the text of the post in msg.payload.text, and put the media in msg.payload.image if you have one</p>
+    <p>msg.payload.image can be a path to a local file or a buffer containing the image</p>
+    <p>msg.payload.description can also hold the image description to be used as the Alt Text</p>
 </script>
 
 <!-- Finally, the node type is registered along with all of its properties   -->
