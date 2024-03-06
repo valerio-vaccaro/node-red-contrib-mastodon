@@ -56,7 +56,9 @@ module.exports = function(RED) {
         if (typeof msg.payload.image === 'string') {
           file = fs.createReadStream(msg.payload.image)
         } else if (typeof msg.payload.image === 'object' && Buffer.isBuffer(msg.payload.image)) {
+          console.log("image is buffer")
           file = new Duplex()
+          file.path = '/tmp/image'
           file.push(msg.payload.image)
           file.push(null)
         }
